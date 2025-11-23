@@ -1,0 +1,81 @@
+# User Preferences Configuration
+user_preferences:
+  # Desired job titles (will be used for searching)
+  job_titles:
+    - "Software Engineer"
+    - "Backend Developer"
+    - "Python Developer"
+    - "Full Stack Developer"
+
+  # Preferred locations
+  locations:
+    - "Bratislava"
+    - "Remote"
+
+  # Required skills (must have at least one)
+  required_skills:
+    - "Python"
+    - "JavaScript"
+    - "Docker"
+    - "Kubernetes"
+
+  # Nice-to-have skills
+  preferred_skills:
+    - "AWS"
+    - "React"
+    - "PostgreSQL"
+    - "Redis"
+
+  # Employment type preferences
+  employment_types:
+    - "full-time"
+    - "contract"
+
+  # Minimum salary (optional, leave empty if not important)
+  min_salary: 3000
+
+  # Experience level
+  experience_level: "mid"  # junior, mid, senior
+
+  # Languages
+  languages:
+    - "English"
+    - "Slovak"
+
+# CV Configuration
+cv_config:
+  # Path to your master CV template
+  cv_template_path: "data/cv/master_cv.docx"
+
+  # Your personal information
+  personal_info:
+    name: "Your Name"
+    email: "your.email@example.com"
+    phone: "+421 XXX XXX XXX"
+    location: "Bratislava, Slovakia"
+    linkedin: "https://linkedin.com/in/yourprofile"
+    github: "https://github.com/yourusername"
+
+  # Output directory for tailored CVs
+  output_directory: "data/cv/tailored/"
+
+# Agent Configuration
+agent_config:
+  # Matching thresholds
+  min_match_score: 0.7
+
+  # Critique agent settings
+  critique_enabled: true
+  critique_strict_mode: false
+
+  # CV tailoring settings
+  cv_tailor_model: "gpt-4"  # or "claude-3-opus"
+  cv_max_pages: 2
+
+  # Notification settings
+  send_notifications: true
+  notification_method: "email"  # email, slack, discord
+
+  # Rate limiting
+  max_jobs_per_day: 10
+  scrape_interval_hours: 24
