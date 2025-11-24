@@ -1,0 +1,34 @@
+# Environment
+.env
+venv/
+env/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Data
+data/jobs/*.json
+data/cv/tailored/*.docx
+data/cv/tailored/*.pdf
+data/logs/*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Selenium/Playwright
+.playwright/
+geckodriver.log
+chromedriver.log

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hunt Commander - Land Your €4k/Month Python Gig</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <div id="app">
+        <!-- Navigation -->
+        <nav class="bg-gray-800 border-b border-gray-700">
+            <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-green-400">🎯 Hunt Commander</h1>
+                <div v-if="!user">
+                    <button @click="showLogin = true" class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded">Login</button>
+                </div>
+                <div v-else class="flex items-center gap-4">
+                    <span class="text-sm">{{ user.email }}</span>
+                    <button @click="logout" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-sm">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section (when not logged in) -->
+        <div v-if="!user" class="container mx-auto px-4 py-20 text-center">
+            <h2 class="text-5xl font-bold mb-6 text-green-400">Land Your €4k/Month Python Gig in Bratislava</h2>
+            <p class="text-xl text-gray-300 mb-8">AI-powered job hunting with negotiation coaching, LinkedIn automation, and tactical insights</p>
+            <div class="flex justify-center gap-4">
+                <button @click="showRegister = true" class="px-8 py-4 bg-green-600 hover:bg-green-700 rounded-lg text-lg font-semibold">
+                    Get Started - €19/month
+                </button>
+            </div>
+
+            <!-- Features -->
+            <div class="grid md:grid-cols-3 gap-8 mt-20">
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <div class="text-4xl mb-4">💰</div>
+                    <h3 class="text-xl font-bold mb-2">Salary Negotiation</h3>
+                    <p class="text-gray-400">AI-powered negotiation strategies using real Glassdoor Slovak market data</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <div class="text-4xl mb-4">🔗</div>
+                    <h3 class="text-xl font-bold mb-2">LinkedIn Infiltrator</h3>
+                    <p class="text-gray-400">Auto-DM recruiters with personalized messages at scale</p>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <div class="text-4xl mb-4">📊</div>
+                    <h3 class="text-xl font-bold mb-2">Full Dashboard</h3>
+                    <p class="text-gray-400">Track applications, prep interviews, analyze rejections</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard (when logged in) -->
+        <div v-else class="container mx-auto px-4 py-8">
+            <!-- Stats Cards -->
+            <div class="grid md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <div class="text-gray-400 text-sm mb-1">Total Applications</div>
+                    <div class="text-3xl font-bold">{{ stats.total_applications || 0 }}</div>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <div class="text-gray-400 text-sm mb-1">Interviewing</div>
+                    <div class="text-3xl font-bold text-blue-400">{{ stats.interviewing || 0 }}</div>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <div class="text-gray-400 text-sm mb-1">Offers</div>
+                    <div class="text-3xl font-bold text-green-400">{{ stats.offers || 0 }}</div>
+                </div>
+                <div class="bg-gray-800 p-6 rounded-lg">
+                    <div class="text-gray-400 text-sm mb-1">Acceptance Rate</div>
+                    <div class="text-3xl font-bold">{{ stats.acceptance_rate?.toFixed(1) || 0 }}%</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex gap-4 mb-6 border-b border-gray-700">
+                <button
+                    @click="activeTab = 'applications'"
+                    :class="activeTab === 'applications' ? 'border-b-2 border-green-400 text-green-400' : 'text-gray-400'"
+                    class="px-4 py-2">
+                    Applications
+                </button>
+                <button
+                    @click="activeTab = 'negotiate'"
+                    :class="activeTab === 'negotiate' ? 'border-b-2 border-green-400 text-green-400' : 'text-gray-400'"
+                    class="px-4 py-2">
+                    Negotiate
+                </button>
+                <button
+                    @click="activeTab = 'linkedin'"
+                    :class="activeTab === 'linkedin' ? 'border-b-2 border-green-400 text-green-400' : 'text-gray-400'"
+                    class="px-4 py-2">
+                    LinkedIn DMs
+                </button>
+                <button
+                    @click="activeTab = 'rejections'"
+                    :class="activeTab === 'rejections' ? 'border-b-2 border-green-400 text-green-400' : 'text-gray-400'"
+                    class="px-4 py-2">
+                    Rejection Analysis
+                </button>
+            </div>
+
+            <!-- Applications Tab -->
+            <div v-if="activeTab === 'applications'" class="bg-gray-800 rounded-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">Your Applications</h3>
+                    <button @click="showAddApp = true" class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded">+ Add Application</button>
+                </div>
+
+                <div v-if="applications.length === 0" class="text-center py-12 text-gray-400">
+                    No applications yet. Start tracking your job hunt!
+                </div>
+
+                <div v-else class="space-y-4">
+                    <div v-for="app in applications" :key="app.id" class="bg-gray-700 p-4 rounded-lg flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-lg">{{ app.job_title }}</h4>
+                            <p class="text-gray-400">{{ app.company }} • {{ app.location }}</p>
+                            <p class="text-sm text-gray-500 mt-1">Applied: {{ formatDate(app.applied_at) }}</p>
+                            <span
+                                :class="{
+                                    'bg-blue-600': app.status === 'applied',
+                                    'bg-yellow-600': app.status === 'interviewing',
+                                    'bg-green-600': app.status === 'offer',
+                                    'bg-red-600': app.status === 'rejected'
+                                }"
+                                class="inline-block px-2 py-1 rounded text-xs mt-2">
+                                {{ app.status }}
+                            </span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button @click="negotiateApp(app)" class="px-3 py-1 bg-green-600 hover:bg-green-700 rounded text-sm">💰 Negotiate</button>
+                            <button class="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm">📝 Prep</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Negotiate Tab -->
+            <div v-if="activeTab === 'negotiate'" class="bg-gray-800 rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-6">Salary Negotiation Tool</h3>
+
+                <div v-if="!negotiationResult" class="space-y-4">
+                    <div>
+                        <label class="block text-sm mb-2">Select Application</label>
+                        <select v-model="selectedAppForNegotiation" class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2">
+                            <option value="">Choose an application...</option>
+                            <option v-for="app in applications" :value="app.id">{{ app.job_title }} at {{ app.company }}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-2">Current Offer (EUR/month)</label>
+                        <input v-model.number="currentOffer" type="number" class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2" placeholder="3500">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-2">Your Target (EUR/month)</label>
+                        <input v-model.number="targetSalary" type="number" class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2" placeholder="4000">
+                    </div>
+                    <button @click="generateNegotiation" class="px-6 py-3 bg-green-600 hover:bg-green-700 rounded font-semibold">
+                        Generate Strategy
+                    </button>
+                </div>
+
+                <div v-else class="space-y-6">
+                    <div class="bg-gray-700 p-6 rounded-lg">
+                        <h4 class="font-bold text-lg mb-4 text-green-400">Market Data</h4>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div>
+                                <div class="text-sm text-gray-400">Average Salary</div>
+                                <div class="text-2xl font-bold">€{{ negotiationResult.market_data.average_salary }}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-400">Range</div>
+                                <div class="text-2xl font-bold">€{{ negotiationResult.market_data.min_salary }} - €{{ negotiationResult.market_data.max_salary }}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-400">Data Sources</div>
+                                <div class="text-sm">{{ negotiationResult.market_data.sources.join(', ') }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-700 p-6 rounded-lg">
+                        <h4 class="font-bold text-lg mb-4">Recommended Counter-Offer</h4>
+                        <div class="text-4xl font-bold text-green-400 mb-4">€{{ negotiationResult.recommended_counter_offer?.toFixed(0) }}</div>
+                        <div class="text-sm text-gray-400">{{ negotiationResult.strategy.should_negotiate ? 'You should negotiate' : 'Current offer is strong' }}</div>
+                    </div>
+
+                    <div class="bg-gray-700 p-6 rounded-lg">
+                        <h4 class="font-bold text-lg mb-3">Leverage Points</h4>
+                        <ul class="space-y-2">
+                            <li v-for="point in negotiationResult.strategy.leverage_points" class="flex items-start">
+                                <span class="text-green-400 mr-2">✓</span>
+                                <span>{{ point }}</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-gray-700 p-6 rounded-lg">
+                        <h4 class="font-bold text-lg mb-3">Email Script</h4>
+                        <pre class="bg-gray-900 p-4 rounded text-sm overflow-x-auto whitespace-pre-wrap">{{ negotiationResult.scripts.email }}</pre>
+                        <button @click="copyScript('email')" class="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-sm">Copy Email</button>
+                    </div>
+
+                    <button @click="negotiationResult = null" class="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded">New Negotiation</button>
+                </div>
+            </div>
+
+            <!-- LinkedIn Tab -->
+            <div v-if="activeTab === 'linkedin'" class="bg-gray-800 rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-6">LinkedIn Recruiter Outreach</h3>
+
+                <div v-if="!linkedinResult" class="space-y-4">
+                    <div class="bg-yellow-900 border border-yellow-700 rounded-lg p-4 mb-4">
+                        <p class="text-sm">⚠️ Requires LinkedIn credentials in .env file (LINKEDIN_EMAIL, LINKEDIN_PASSWORD)</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-2">Search Query</label>
+                        <input v-model="linkedinQuery" type="text" class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2" placeholder="Python Developer">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-2">Location</label>
+                        <input v-model="linkedinLocation" type="text" class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2" placeholder="Bratislava">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-2">Max Messages</label>
+                        <input v-model.number="linkedinMaxMessages" type="number" class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2" placeholder="10">
+                    </div>
+                    <button @click="sendLinkedInDMs" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded font-semibold">
+                        🔗 Send DMs to Recruiters
+                    </button>
+                </div>
+
+                <div v-else class="space-y-4">
+                    <div class="bg-gray-700 p-6 rounded-lg">
+                        <h4 class="font-bold text-lg mb-4 text-blue-400">Results</h4>
+                        <div class="grid md:grid-cols-3 gap-4 mb-6">
+                            <div>
+                                <div class="text-sm text-gray-400">Recruiters Found</div>
+                                <div class="text-2xl font-bold">{{ linkedinResult.total_found }}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-400">Messages Sent</div>
+                                <div class="text-2xl font-bold text-green-400">{{ linkedinResult.messages_sent }}</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-400">Failed</div>
+                                <div class="text-2xl font-bold text-red-400">{{ linkedinResult.failed }}</div>
+                            </div>
+                        </div>
+
+                        <h5 class="font-semibold mb-2">Recruiters Contacted:</h5>
+                        <div class="space-y-2">
+                            <div v-for="recruiter in linkedinResult.recruiters_contacted" class="bg-gray-800 p-3 rounded">
+                                <div class="font-semibold">{{ recruiter.name }}</div>
+                                <div class="text-sm text-gray-400">{{ recruiter.title }} at {{ recruiter.company }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button @click="linkedinResult = null" class="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded">New Campaign</button>
+                </div>
+            </div>
+
+            <!-- Rejection Analysis Tab -->
+            <div v-if="activeTab === 'rejections'" class="bg-gray-800 rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-6">Rejection Analysis</h3>
+
+                <div v-if="rejectionAnalysis">
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-gray-700 p-6 rounded-lg">
+                            <div class="text-sm text-gray-400 mb-1">Total Rejections</div>
+                            <div class="text-3xl font-bold">{{ rejectionAnalysis.total_rejections }}</div>
+                        </div>
+                        <div class="bg-gray-700 p-6 rounded-lg">
+                            <div class="text-sm text-gray-400 mb-1">Rejection Rate</div>
+                            <div class="text-3xl font-bold">{{ rejectionAnalysis.rejection_rate?.toFixed(1) }}%</div>
+                        </div>
+                    </div>
+
+                    <div v-if="rejectionAnalysis.insights.length > 0" class="bg-yellow-900 border border-yellow-700 rounded-lg p-6 mb-6">
+                        <h4 class="font-bold mb-3">💡 Insights</h4>
+                        <ul class="space-y-2">
+                            <li v-for="insight in rejectionAnalysis.insights">{{ insight }}</li>
+                        </ul>
+                    </div>
+
+                    <div v-if="rejectionAnalysis.recommendations && rejectionAnalysis.recommendations.length > 0" class="bg-gray-700 p-6 rounded-lg">
+                        <h4 class="font-bold mb-3">📋 Recommendations</h4>
+                        <ul class="space-y-2">
+                            <li v-for="rec in rejectionAnalysis.recommendations" class="flex items-start">
+                                <span class="text-green-400 mr-2">→</span>
+                                <span>{{ rec }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Modal -->
+        <div v-if="showLogin" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div class="bg-gray-800 rounded-lg p-8 max-w-md w-full">
+                <h3 class="text-2xl font-bold mb-6">Login</h3>
+                <div class="space-y-4">
+                    <input v-model="loginEmail" type="email" placeholder="Email" class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2">
+                    <input v-model="loginPassword" type="password" placeholder="Password" class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2">
+                    <button @click="login" class="w-full px-4 py-3 bg-green-600 hover:bg-green-700 rounded font-semibold">Login</button>
+                    <button @click="showLogin = false" class="w-full px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Modal -->
+        <div v-if="showRegister" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div class="bg-gray-800 rounded-lg p-8 max-w-md w-full">
+                <h3 class="text-2xl font-bold mb-6">Get Started - €19/month</h3>
+                <div class="space-y-4">
+                    <input v-model="registerName" type="text" placeholder="Full Name" class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2">
+                    <input v-model="registerEmail" type="email" placeholder="Email" class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2">
+                    <input v-model="registerPassword" type="password" placeholder="Password" class="w-full bg-gray-700 border border-gray-600 rounded px-4 py-2">
+                    <button @click="register" class="w-full px-4 py-3 bg-green-600 hover:bg-green-700 rounded font-semibold">Create Account & Subscribe</button>
+                    <button @click="showRegister = false" class="w-full px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    API_URL: 'http://localhost:8000',
+                    user: null,
+                    token: localStorage.getItem('token'),
+
+                    showLogin: false,
+                    showRegister: false,
+                    showAddApp: false,
+
+                    loginEmail: '',
+                    loginPassword: '',
+                    registerName: '',
+                    registerEmail: '',
+                    registerPassword: '',
+
+                    activeTab: 'applications',
+                    applications: [],
+                    stats: {},
+
+                    // Negotiation
+                    selectedAppForNegotiation: '',
+                    currentOffer: null,
+                    targetSalary: 4000,
+                    negotiationResult: null,
+
+                    // LinkedIn
+                    linkedinQuery: 'Python Developer',
+                    linkedinLocation: 'Bratislava',
+                    linkedinMaxMessages: 10,
+                    linkedinResult: null,
+
+                    // Rejection Analysis
+                    rejectionAnalysis: null
+                }
+            },
+
+            mounted() {
+                if (this.token) {
+                    this.loadUser();
+                }
+            },
+
+            methods: {
+                async apiCall(endpoint, options = {}) {
+                    const headers = {
+                        'Content-Type': 'application/json',
+                        ...(this.token && { 'Authorization': `Bearer ${this.token}` })
+                    };
+
+                    const response = await fetch(`${this.API_URL}${endpoint}`, {
+                        ...options,
+                        headers
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.detail || 'Request failed');
+                    }
+
+                    return response.json();
+                },
+
+                async login() {
+                    try {
+                        const data = await this.apiCall('/auth/login', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                email: this.loginEmail,
+                                password: this.loginPassword
+                            })
+                        });
+
+                        this.token = data.access_token;
+                        localStorage.setItem('token', this.token);
+                        this.user = data.user;
+                        this.showLogin = false;
+                        this.loadDashboard();
+                    } catch (error) {
+                        alert('Login failed: ' + error.message);
+                    }
+                },
+
+                async register() {
+                    try {
+                        const data = await this.apiCall('/auth/register', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                email: this.registerEmail,
+                                password: this.registerPassword,
+                                full_name: this.registerName
+                            })
+                        });
+
+                        this.token = data.access_token;
+                        localStorage.setItem('token', this.token);
+                        this.user = data.user;
+                        this.showRegister = false;
+
+                        // Show subscription page
+                        alert('Account created! Please add payment method to activate subscription.');
+                        this.loadDashboard();
+                    } catch (error) {
+                        alert('Registration failed: ' + error.message);
+                    }
+                },
+
+                logout() {
+                    this.user = null;
+                    this.token = null;
+                    localStorage.removeItem('token');
+                },
+
+                async loadUser() {
+                    try {
+                        const data = await this.apiCall('/applications/stats');
+                        this.loadDashboard();
+                    } catch (error) {
+                        console.error('Failed to load user:', error);
+                        this.logout();
+                    }
+                },
+
+                async loadDashboard() {
+                    await Promise.all([
+                        this.loadApplications(),
+                        this.loadStats(),
+                        this.loadRejectionAnalysis()
+                    ]);
+                },
+
+                async loadApplications() {
+                    try {
+                        const data = await this.apiCall('/applications');
+                        this.applications = data.applications;
+                    } catch (error) {
+                        console.error('Failed to load applications:', error);
+                    }
+                },
+
+                async loadStats() {
+                    try {
+                        this.stats = await this.apiCall('/applications/stats');
+                    } catch (error) {
+                        console.error('Failed to load stats:', error);
+                    }
+                },
+
+                async generateNegotiation() {
+                    if (!this.selectedAppForNegotiation) {
+                        alert('Please select an application');
+                        return;
+                    }
+
+                    try {
+                        this.negotiationResult = await this.apiCall('/negotiate', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                application_id: parseInt(this.selectedAppForNegotiation),
+                                current_offer: this.currentOffer,
+                                target_salary: this.targetSalary
+                            })
+                        });
+                    } catch (error) {
+                        alert('Negotiation generation failed: ' + error.message);
+                    }
+                },
+
+                async sendLinkedInDMs() {
+                    try {
+                        this.linkedinResult = await this.apiCall('/linkedin/dm-recruiters', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                search_query: this.linkedinQuery,
+                                location: this.linkedinLocation,
+                                max_messages: this.linkedinMaxMessages
+                            })
+                        });
+                    } catch (error) {
+                        alert('LinkedIn automation failed: ' + error.message);
+                    }
+                },
+
+                async loadRejectionAnalysis() {
+                    try {
+                        this.rejectionAnalysis = await this.apiCall('/rejection-analysis');
+                    } catch (error) {
+                        console.error('Failed to load rejection analysis:', error);
+                    }
+                },
+
+                negotiateApp(app) {
+                    this.selectedAppForNegotiation = app.id;
+                    this.activeTab = 'negotiate';
+                },
+
+                copyScript(type) {
+                    const script = this.negotiationResult.scripts[type];
+                    navigator.clipboard.writeText(script);
+                    alert('Script copied to clipboard!');
+                },
+
+                formatDate(dateString) {
+                    return new Date(dateString).toLocaleDateString();
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
