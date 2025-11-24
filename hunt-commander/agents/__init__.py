@@ -7,6 +7,9 @@ from .cv_tailor_agent import CVTailorAgent
 from .notification_agent import NotificationAgent
 from .negotiation_agent import NegotiationAgent
 from .linkedin_agent import LinkedInAgent
+from .cover_letter_agent import CoverLetterAgent
+from .auto_submit_agent import AutoSubmitAgent
+from .email_parser_agent import EmailParserAgent
 
 __all__ = [
     'BaseAgent',
@@ -16,5 +19,8 @@ __all__ = [
     'CVTailorAgent',
     'NotificationAgent',
     'NegotiationAgent',
-    'LinkedInAgent'
+    'LinkedInAgent',
+    'CoverLetterAgent',
+    'AutoSubmitAgent',
+    'EmailParserAgent'
 ]

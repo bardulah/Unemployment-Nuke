@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      width: 350px;
+      padding: 15px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+    }
+    h3 {
+      margin: 0 0 15px 0;
+      color: #10b981;
+    }
+    .section {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #374151;
+      border-radius: 4px;
+      background: #374151;
+      color: #fff;
+      font-size: 13px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #059669;
+    }
+    button:disabled {
+      background: #6b7280;
+      cursor: not-allowed;
+    }
+    .status {
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-top: 10px;
+      display: none;
+    }
+    .status.success {
+      background: #064e3b;
+      color: #10b981;
+      display: block;
+    }
+    .status.error {
+      background: #7f1d1d;
+      color: #ef4444;
+      display: block;
+    }
+    .job-info {
+      background: #374151;
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    .job-title {
+      font-weight: 600;
+      color: #10b981;
+    }
+  </style>
+</head>
+<body>
+  <h3>🎯 Hunt Commander</h3>
+
+  <div id="jobDetected" class="job-info" style="display: none;">
+    <div class="job-title" id="detectedTitle"></div>
+    <div id="detectedCompany"></div>
+  </div>
+
+  <div class="section">
+    <label>API URL</label>
+    <input type="text" id="apiUrl" placeholder="http://localhost:8000" />
+  </div>
+
+  <div class="section">
+    <label>Auth Token</label>
+    <input type="text" id="authToken" placeholder="Your JWT token" />
+  </div>
+
+  <button id="saveConfig">Save Configuration</button>
+  <button id="autoFill" disabled>Auto-Fill Application</button>
+  <button id="trackJob">Track This Job</button>
+
+  <div id="status" class="status"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
