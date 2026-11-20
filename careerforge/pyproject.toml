@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "careerforge"
+version = "0.1.0"
+description = "Career strategy and portfolio-builder CLI + local web dashboard powered by Mistral. Gap analysis, 14-day micro-project specs, tailored CV/outreach, and a SQLite application tracker."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = []
+
+[project.optional-dependencies]
+dev = []
+
+[project.scripts]
+careerforge = "careerforge.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["careerforge*"]
