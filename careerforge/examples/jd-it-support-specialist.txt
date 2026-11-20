@@ -1,0 +1,32 @@
+IT Support Specialist (L1/L2) — TatraTech Systems, Bratislava / remote
+
+Who we are
+TatraTech runs a 24/7 service desk for 4,000 employees across Slovakia and Czechia.
+We are hiring an IT Support Specialist to join the Bratislava team.
+
+Responsibilities
+- Triage and resolve tickets in Jira Service Management (hardware, software, access, network)
+- Support Windows 11 endpoints and Active Directory (user/device management, group policies)
+- Troubleshoot networking basics: TCP/IP, DNS, DHCP, VPN, Wi-Fi
+- Onboard/offboard employees: accounts, licenses, equipment
+- Maintain the knowledge base in Confluence; document fixes so L1 can resolve them
+- Escalate to L2/L3 with clear, complete ticket notes
+- Participate in shift rotation (early/late, occasional weekend)
+
+Requirements
+- 1+ years in a support or IT operations role (internal IT, MSP, service desk)
+- Solid Windows administration and Active Directory basics
+- Understanding of networking: TCP/IP, DNS, DHCP, VPN
+- Ticketing tool experience (Jira, Zendesk, Freshdesk or similar); ITIL awareness a plus
+- Customer-facing communication in English (B2); Slovak required
+- Google IT Support certificate or equivalent hands-on knowledge
+
+Nice to have
+- Python or PowerShell scripting for automation
+- Experience with MDM/Intune
+- Home lab or homelab projects
+
+What we offer
+- Remote-first with a Bratislava office, full-time employment
+- Paid certifications and a clear path to L2/L3 or sysadmin
+- 25 days vacation, education budget, Multisport

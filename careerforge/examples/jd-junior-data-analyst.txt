@@ -1,0 +1,32 @@
+Junior Data Analyst — ACME Logistics s.r.o., Bratislava (hybrid)
+
+About the role
+We run warehousing and e-commerce operations for fashion brands across the EU. Our ops
+team drowns in spreadsheets: order data in one system, courier reports in another,
+invoices in a third. We need someone who turns that mess into reliable numbers the
+business can act on.
+
+What you'll do
+- Collect, clean and analyze operational data (orders, inventory, shipments) in Python (pandas) and SQL
+- Build dashboards and recurring reports in Power BI or Tableau
+- Automate repetitive Excel exports and reconciliations (VBA or Python)
+- Verify data quality: duplicates, missing values, mismatches between systems
+- Present insights to operations managers in plain language
+- Support ad-hoc analysis: claims, courier performance, stock levels
+
+What you bring
+- Basic to intermediate Python and SQL; comfortable with pandas
+- Solid Excel (pivot tables, VLOOKUP); Power BI or Tableau is a plus
+- High attention to detail and experience with structured documentation
+- Ability to communicate findings to non-technical stakeholders
+- English B2+, Slovak native
+
+Nice to have
+- Experience with logistics, e-commerce or customs data
+- REST APIs, web scraping (BeautifulSoup/Selenium), git
+- Power BI certification
+
+What we offer
+- Hybrid work in Bratislava, full-time
+- Mentorship from a senior analyst, clear growth path to Data Analyst
+- Modern stack: PostgreSQL, dbt, Power BI, GitHub Actions
